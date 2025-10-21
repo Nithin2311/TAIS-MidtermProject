@@ -1,0 +1,14 @@
+# Large data files
+data/raw/
+
+# Model files (too large for GitHub)
+models/
+*.pth
+*.bin
+*.safetensors
+
+# Colab and cache
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.DS_Store
