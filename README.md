@@ -36,7 +36,7 @@ An AI-powered resume classification system that automatically categorizes resume
 
 ### Installation & Setup
 
-#### Option 1: Google Colab (Recommended for Best Performance)
+# Option 1: Google Colab (Recommended for Best Performance)
 bash
 # Clone repository
 !git clone https://github.com/Nithin2311/TAIS-MidtermProject.git
