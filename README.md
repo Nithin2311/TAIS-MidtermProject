@@ -70,7 +70,6 @@ python train.py
 # Launch web interface
 python gradio_app.py
 
-📝 Source Declaration
 External Sources Used
 Component	Source	License	Modifications
 Dataset	UpdatedResumeDataSet from Google Drive	Academic Use	Used as-is for academic purposes
@@ -86,7 +85,7 @@ Evaluation metrics system - Original implementation
 Project architecture - Original design
 All core machine learning components and system architecture were implemented from scratch by the team members.
 
-🚨 Troubleshooting
+Troubleshooting
 Common Issues & Solutions
 -CUDA Out of Memory:	Reduce batch size to 8 in config.py
 -Dataset Download Failed:	Check internet connection; URL: https://drive.google.com/uc?id=1QWJo26V-95XF1uGJKKVnnf96uaclAENk
@@ -99,16 +98,15 @@ Performance Tips
 -Reduce MAX_LENGTH to 256 for faster inference
 -Use batch processing for multiple resumes
 
-📚 References
+References
 Dataset: https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset from kaggle 
 RoBERTa Paper: Liu et al. (2019) "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
 HuggingFace Transformers: Wolf et al. (2020) "Transformers: State-of-the-Art Natural Language Processing"
 Course Materials: CAI 6605 Trustworthy AI Systems, USF Fall 2025
 
-📄 License
-This project is for academic purposes as part of CAI 6605: Trustworthy AI Systems at the University of South Florida. All rights reserved by the course instructors and team members.
+License: This project is for academic purposes as part of CAI 6605: Trustworthy AI Systems at the University of South Florida. All rights reserved by the course instructors and team members.
 
-👨‍🏫 Course Information
+Course Information
 Course: CAI 6605 - Trustworthy AI Systems
 University: University of South Florida
 Semester: Fall 2025
