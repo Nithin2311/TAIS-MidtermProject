@@ -31,16 +31,16 @@ An AI-powered resume classification system that automatically categorizes resume
 ## 🚀 Quick Start Guide
 
 ### Prerequisites
-- Python 3.8+
-- Google Colab (recommended) or local environment with 4GB+ GPU RAM
+* - Python 3.8+
+* - Google Colab (recommended) or local environment with 4GB+ GPU RAM
 
 ### Installation & Setup
 
 # Option 1: Google Colab (Recommended for Best Performance)
 bash
 # Clone repository
-!git clone https://github.com/Nithin2311/TAIS-MidtermProject.git
-%cd TAIS-MidtermProject
+* !git clone https://github.com/Nithin2311/TAIS-MidtermProject.git
+* %cd TAIS-MidtermProject
 
 # Install dependencies
 !pip install -r requirements.txt
@@ -54,12 +54,12 @@ bash
 # Option 2: Local Installation
 
 # Clone repository
-git clone https://github.com/Nithin2311/TAIS-MidtermProject.git
-cd TAIS-MidtermProject
+* git clone https://github.com/Nithin2311/TAIS-MidtermProject.git
+* cd TAIS-MidtermProject
 
 # Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+* python -m venv venv
+* source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
