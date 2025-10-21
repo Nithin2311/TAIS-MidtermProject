@@ -76,7 +76,7 @@ Base Model:	RoBERTa-base from HuggingFace	MIT License	Fine-tuned on resume data
 Libraries: 	PyTorch, Transformers, Gradio, Scikit-learn	Various Open Source	Used according to license terms
 
 # Original Code
-Data preprocessing pipeline - Original implementation,
+* Data preprocessing pipeline - Original implementation,
 Automated dataset download system - Original implementation,
 Model training framework - Original implementation,
 Gradio interface design - Original implementation,
