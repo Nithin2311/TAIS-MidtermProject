@@ -70,44 +70,43 @@ python train.py
 # Launch web interface
 python gradio_app.py
 
-#External Sources Used
-Component	Source	License	Modifications
-Dataset	UpdatedResumeDataSet from Google Drive	Academic Use	Used as-is for academic purposes
-Base Model	RoBERTa-base from HuggingFace	MIT License	Fine-tuned on resume data
-Libraries	PyTorch, Transformers, Gradio, Scikit-learn	Various Open Source	Used according to license terms
+# Source Declaration
+Dataset:	resume-dataSet from kaggle Academic Use	Used as-is for academic purposes
+Base Model:	RoBERTa-base from HuggingFace	MIT License	Fine-tuned on resume data
+Libraries: 	PyTorch, Transformers, Gradio, Scikit-learn	Various Open Source	Used according to license terms
 
-#Original Code
-Data preprocessing pipeline - Original implementation
-Automated dataset download system - Original implementation
-Model training framework - Original implementation
-Gradio interface design - Original implementation
-Evaluation metrics system - Original implementation
-Project architecture - Original design
+# Original Code
+Data preprocessing pipeline - Original implementation,
+Automated dataset download system - Original implementation,
+Model training framework - Original implementation,
+Gradio interface design - Original implementation,
+Evaluation metrics system - Original implementation,
+Project architecture - Original design,
 All core machine learning components and system architecture were implemented from scratch by the team members.
 
-#Troubleshooting
+# Troubleshooting
 Common Issues & Solutions
 -CUDA Out of Memory:	Reduce batch size to 8 in config.py
 -Dataset Download Failed:	Check internet connection; URL: https://drive.google.com/uc?id=1QWJo26V-95XF1uGJKKVnnf96uaclAENk
 -Import Errors:	Run pip install -r requirements.txt
 -Gradio Not Loading:	Check firewall settings or use share=True in launch()
 
-#Performance Tips
+# Performance Tips
 -Use Google Colab Pro for faster GPU training
 -Enable FP16 training in config.py
 -Reduce MAX_LENGTH to 256 for faster inference
 -Use batch processing for multiple resumes
 
-#References
+# References
 Dataset: https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset from kaggle 
 RoBERTa Paper: Liu et al. (2019) "RoBERTa: A Robustly Optimized BERT Pretraining Approach"
 HuggingFace Transformers: Wolf et al. (2020) "Transformers: State-of-the-Art Natural Language Processing"
 Course Materials: CAI 6605 Trustworthy AI Systems, USF Fall 2025
 
-#License: 
+# License: 
 This project is for academic purposes as part of CAI 6605: Trustworthy AI Systems at the University of South Florida. All rights reserved by the course instructors and team members.
 
-#Course Information
+# Course Information
 Course: CAI 6605 - Trustworthy AI Systems
 University: University of South Florida
 Semester: Fall 2025
