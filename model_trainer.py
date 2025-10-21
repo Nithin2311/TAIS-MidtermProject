@@ -1,4 +1,8 @@
-# model_trainer.py - Model training components
+"""
+Model training components
+CAI 6605 - Trustworthy AI Systems - Midterm Project
+"""
+
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
@@ -12,6 +16,8 @@ from transformers import (
     Trainer
 )
 import json
+import os
+
 
 class ResumeDataset(Dataset):
     """PyTorch Dataset for resume classification"""
@@ -40,6 +46,7 @@ class ResumeDataset(Dataset):
             'labels': torch.tensor(self.labels[idx], dtype=torch.long)
         }
 
+
 class CustomTrainer(Trainer):
     """Enhanced trainer with class weight support"""
     
@@ -61,6 +68,7 @@ class CustomTrainer(Trainer):
         loss = self.loss_fn(logits, labels)
         return (loss, outputs) if return_outputs else loss
 
+
 def compute_metrics(eval_pred):
     """Compute comprehensive metrics"""
     predictions, labels = eval_pred
@@ -78,11 +86,12 @@ def compute_metrics(eval_pred):
         'f1': f1
     }
 
-def evaluate_model(trainer, test_dataset, label_map, save_results=True):
+
+def evaluate_model(trainer, test_dataset, label_map):
     """Evaluate the trained model and save results"""
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("📊 FINAL EVALUATION")
-    print("="*70)
+    print("=" * 70)
     
     # Test results
     test_results = trainer.evaluate(test_dataset)
@@ -97,9 +106,9 @@ def evaluate_model(trainer, test_dataset, label_map, save_results=True):
     pred_labels = np.argmax(predictions.predictions, axis=1)
     true_labels = predictions.label_ids
     
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("📋 PER-CATEGORY PERFORMANCE")
-    print("="*70)
+    print("=" * 70)
     
     category_names = [label_map[i] for i in range(len(label_map))]
     report = classification_report(
@@ -134,17 +143,37 @@ def evaluate_model(trainer, test_dataset, label_map, save_results=True):
         print(f"{i}. {cat['category']:25s} F1: {cat['f1']:.3f} ({int(cat['support'])} samples)")
     
     # Save results
-    if save_results:
-        results = {
-            'model': 'roberta-base',
-            'test_accuracy': float(test_results['eval_accuracy']),
-            'test_precision': float(test_results['eval_precision']),
-            'test_recall': float(test_results['eval_recall']),
-            'test_f1': float(test_results['eval_f1']),
-            'num_categories': len(label_map),
-        }
-        
-        with open('results/midterm_results.json', 'w') as f:
-            json.dump(results, f, indent=2)
+    os.makedirs('results', exist_ok=True)
+    results = {
+        'model': 'roberta-base',
+        'test_accuracy': float(test_results['eval_accuracy']),
+        'test_precision': float(test_results['eval_precision']),
+        'test_recall': float(test_results['eval_recall']),
+        'test_f1': float(test_results['eval_f1']),
+        'num_categories': len(label_map),
+        'top_categories': category_scores[:5]
+    }
+    
+    with open('results/midterm_results.json', 'w') as f:
+        json.dump(results, f, indent=2)
+    
+    print(f"\n✅ Results saved to 'results/midterm_results.json'")
     
     return test_results
+
+
+def setup_model(num_labels, model_name='roberta-base'):
+    """Initialize model and tokenizer"""
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"🖥️  Device: {device}")
+    
+    # Initialize tokenizer and model
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        model_name,
+        num_labels=num_labels
+    )
+    
+    print(f"✅ Loaded {model_name} ({sum(p.numel() for p in model.parameters())/1e6:.1f}M parameters)")
+    
+    return model, tokenizer, device
