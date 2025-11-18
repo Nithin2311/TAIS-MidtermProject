@@ -1,5 +1,5 @@
 """
-Enhanced training script with bias detection and mitigation
+Training script for Resume Classification System
 CAI 6605 - Trustworthy AI Systems - Final Project
 Group 15: Nithin Palyam, Lorenzo LaPlace
 """
@@ -11,13 +11,12 @@ warnings.filterwarnings('ignore')
 from config import Config
 from data_processor import download_dataset, load_and_preprocess_data, split_data
 from model_trainer import ResumeDataset, CustomTrainer, compute_metrics, evaluate_model, setup_model
-from bias_analyzer import BiasAnalyzer, BiasVisualization
-from debiasing_strategies import BiasMitigationPipeline
 import torch
 from transformers import TrainingArguments
 from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 import json
+import pickle
 
 
 def setup_environment():
@@ -29,78 +28,35 @@ def setup_environment():
     os.makedirs('visualizations', exist_ok=True)
 
 
-def run_bias_analysis(trainer, test_dataset, test_texts, test_labels, label_map, device):
-    """Run comprehensive bias analysis"""
-    print("\n" + "=" * 70)
-    print("🔍 RUNNING COMPREHENSIVE BIAS ANALYSIS")
-    print("=" * 70)
+def save_training_data(X_train, X_val, X_test, y_train, y_val, y_test, label_map):
+    """Save training data for later bias analysis"""
+    training_data = {
+        'X_train': X_train,
+        'X_val': X_val, 
+        'X_test': X_test,
+        'y_train': y_train,
+        'y_val': y_val,
+        'y_test': y_test,
+        'label_map': label_map
+    }
     
-    # Get model and tokenizer for bias analysis
-    model = trainer.model
-    tokenizer = trainer.tokenizer
+    with open('data/processed/training_data.pkl', 'wb') as f:
+        pickle.dump(training_data, f)
     
-    # Get test predictions
-    test_predictions = trainer.predict(test_dataset)
-    test_pred_labels = np.argmax(test_predictions.predictions, axis=1)
-    
-    # Initialize bias analyzer
-    bias_analyzer = BiasAnalyzer(model, tokenizer, label_map, device)
-    
-    # Run comprehensive bias analysis
-    bias_report = bias_analyzer.comprehensive_bias_analysis(
-        test_texts, test_labels, test_pred_labels
-    )
-    
-    # Generate visualizations
-    print("\n📊 Generating bias visualizations...")
-    BiasVisualization.plot_fairness_metrics(
-        bias_report['fairness_metrics'],
-        save_path='visualizations/fairness_metrics.png'
-    )
-    
-    BiasVisualization.plot_category_bias(
-        bias_report['category_bias_analysis'],
-        save_path='visualizations/category_bias.png'
-    )
-    
-    # Save bias report
-    with open('results/comprehensive_bias_report.json', 'w') as f:
-        json.dump(bias_report, f, indent=2)
-    
-    print("✅ Bias analysis complete! Report saved to 'results/comprehensive_bias_report.json'")
-    
-    return bias_report
-
-
-def apply_bias_mitigation(texts, labels, demographics, model, tokenizer, label_map, device):
-    """Apply bias mitigation strategies"""
-    print("\n" + "=" * 70)
-    print("🛡️  APPLYING BIAS MITIGATION STRATEGIES")
-    print("=" * 70)
-    
-    mitigation_pipeline = BiasMitigationPipeline(model, tokenizer, label_map, device)
-    
-    # Apply comprehensive debiasing
-    debiased_texts, debiased_labels = mitigation_pipeline.comprehensive_debiasing(
-        texts, labels, texts, labels, demographics  # Using same data for demo
-    )
-    
-    print(f"✅ Bias mitigation complete: {len(debiased_texts)} debiased samples")
-    
-    return debiased_texts, debiased_labels
+    print("✅ Training data saved for bias analysis")
 
 
 def main():
-    """Enhanced main training pipeline with bias detection"""
+    """Main training pipeline - trains model only"""
     print("=" * 70)
-    print("🚀 ENHANCED RESUME CLASSIFICATION SYSTEM - FINAL PROJECT")
+    print("🚀 RESUME CLASSIFICATION SYSTEM - MODEL TRAINING")
     print("=" * 70)
     print("CAI 6605: Trustworthy AI Systems")
     print("Group 15: Nithin Palyam, Lorenzo LaPlace")
-    print("Target: >80% Accuracy + Comprehensive Bias Analysis")
-    print("=" * 70 + "\n")
+    print("Target: >80% Accuracy | Model: RoBERTa-base")
+    print("=" + "=" * 70 + "\n")
     
-    # Display enhanced configuration
+    # Display configuration
     Config.display_config()
     
     # Setup environment
@@ -122,9 +78,11 @@ def main():
         df, Config.TEST_SIZE, Config.VAL_SIZE, Config.RANDOM_STATE
     )
     
-    # Save label map
+    # Save label map and training data
     with open('data/processed/label_map.json', 'w') as f:
         json.dump(label_map, f, indent=2)
+    
+    save_training_data(X_train, X_val, X_test, y_train, y_val, y_test, label_map)
     
     # Model setup
     model, tokenizer, device = setup_model(num_labels, Config.MODEL_NAME)
@@ -180,7 +138,7 @@ def main():
     print(f"Batch Size: {Config.BATCH_SIZE}")
     print(f"Learning Rate: {Config.LEARNING_RATE}")
     print(f"Estimated Time: ~{Config.NUM_EPOCHS * 3} minutes")
-    print("=" * 70 + "\n")
+    print("=" + "=" * 70 + "\n")
     
     # Train model
     trainer.train()
@@ -194,55 +152,23 @@ def main():
     # Standard evaluation
     test_results = evaluate_model(trainer, test_dataset, label_map)
     
-    # Enhanced bias analysis
-    bias_report = run_bias_analysis(
-        trainer, test_dataset, X_test, y_test, label_map, device
-    )
+    # Save test results
+    with open('results/training_results.json', 'w') as f:
+        json.dump(test_results, f, indent=2)
     
-    # Apply bias mitigation (demonstration)
-    from bias_analyzer import DemographicInference
-    demo_inference = DemographicInference()
-    train_demographics = {
-        'gender': [demo_inference.infer_gender(text) for text in X_train],
-        'diversity_background': [demo_inference.infer_diversity_background(text) for text in X_train],
-        'privilege_level': [demo_inference.infer_privilege_level(text) for text in X_train]
-    }
-    
-    debiased_texts, debiased_labels = apply_bias_mitigation(
-        X_train, y_train, train_demographics, model, tokenizer, label_map, device
-    )
-    
-    # Final project summary
+    # Project summary
     print("\n" + "=" * 70)
-    print("✅ FINAL PROJECT COMPLETE!")
+    print("✅ MODEL TRAINING COMPLETE!")
     print("=" * 70)
     print(f"📊 FINAL TEST ACCURACY: {test_results['eval_accuracy']*100:.2f}%")
     print(f"🎯 TARGET ACHIEVED: {test_results['eval_accuracy']*100:.2f}% > 80%")
     
-    # Bias analysis summary
-    avg_fairness_metrics = {}
-    for demo_type, metrics in bias_report['fairness_metrics'].items():
-        avg_fairness = np.mean([metrics['demographic_parity'], metrics['equal_opportunity'], metrics['accuracy_equality']])
-        avg_fairness_metrics[demo_type] = avg_fairness
-    
-    print(f"\n🛡️  BIAS ANALYSIS SUMMARY:")
-    for demo_type, fairness_score in avg_fairness_metrics.items():
-        status = "✅" if fairness_score < 0.1 else "⚠️"
-        print(f"  {status} {demo_type.upper():20s} Fairness Score: {fairness_score:.3f}")
-    
-    print(f"\n👤 NAME-BASED BIAS: {bias_report['name_substitution_bias']['average_gender_bias']:.3f}")
-    
-    print("\nKey Achievements:")
-    print("  ✓ Exceeded 80% accuracy target (84.45%)")
-    print("  ✓ Comprehensive bias detection framework")
-    print("  ✓ Demographic parity and equal opportunity metrics")
-    print("  ✓ Name substitution experiments for bias measurement")
-    print("  ✓ Category-level bias analysis across 24 job types")
-    print("  ✓ Bias mitigation strategies implementation")
-    print("  ✓ Professional visualizations and reporting")
+    print("\nNext steps:")
+    print("💡 Run bias analysis: python bias_analysis.py")
+    print("💡 Launch web interface: python gradio_app.py")
     print("=" * 70)
     
-    return trainer, tokenizer, test_results, bias_report
+    return trainer, tokenizer, test_results
 
 
 if __name__ == "__main__":
